@@ -10,7 +10,7 @@ export const signup = async (req, res) => {
     // check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ error: "User already exists" });
+      return res.status(400).json({ message: "User already exists " });
     }
 
     // create random avatar
@@ -64,7 +64,7 @@ export const signup = async (req, res) => {
     });
   } catch (error) {
     console.error("Signup error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -75,18 +75,18 @@ export const signin = async (req, res) => {
     // check if user already exists
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ error: "invalid email or password" });
+      return res.status(400).json({ message: "invalid email or password" });
     }
 
     // hash password
     const isPass = await bcrypt.compare(password, user.password);
     if (!isPass) {
-      return res.status(500).json({ error: "invalid email or password" });
+      return res.status(500).json({ message: "invalid email or password" });
     }
 
     // generate jwt token
     const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
-      expiresIn: "1d",
+      expiresIn: "1h",
     });
 
     // set jwt cookie
@@ -107,7 +107,7 @@ export const signin = async (req, res) => {
     });
   } catch (error) {
     console.error("login error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 

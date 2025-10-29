@@ -3,12 +3,7 @@ import useAuthUser from "../hooks/useAuthUSer";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { completeOnboarding } from "../lib/api";
-import {
-  LoaderIcon,
-  MapPinIcon,
-  ShipWheelIcon,
-  ShuffleIcon,
-} from "lucide-react";
+import { LoaderIcon, MapPin, ShipWheelIcon, ShuffleIcon } from "lucide-react";
 import { LANGUAGES } from "../constants";
 
 const OnboardingPage = () => {
@@ -179,8 +174,7 @@ const OnboardingPage = () => {
               <label className="label">
                 <span className="label-text">Location</span>
               </label>
-              <div className="relative">
-                <MapPinIcon className="absolute top-1/2 transform -translate-y-1/2 left-3 size-5 text-base-content opacity-70" />
+              <div className="relative ">
                 <input
                   type="text"
                   name="location"
@@ -191,6 +185,7 @@ const OnboardingPage = () => {
                   className="input input-bordered w-full pl-10"
                   placeholder="City, Country"
                 />
+                <MapPin className="absolute  top-1/2 transform -translate-y-1/2 left-3 size-5 text-base-content opacity-70" />
               </div>
             </div>
 

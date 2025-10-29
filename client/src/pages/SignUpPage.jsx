@@ -1,13 +1,7 @@
-import React, { useState } from "react";
-import { Headset, Link } from "lucide-react";
-import {
-  QueryClient,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
-import axios from "axios";
-import { axiosInstance } from "../lib/axios";
-import { signup } from "../lib/api";
+import { useState } from "react";
+import { Headset } from "lucide-react";
+import { Link } from "react-router-dom";
+import useSignup from "../hooks/useSignup";
 
 const SignUpPage = () => {
   const [signUpData, setSignUpData] = useState({
@@ -16,13 +10,7 @@ const SignUpPage = () => {
     password: "",
   });
 
-  const queryClient = useQueryClient();
-  const { mutate, isPending, error } = useMutation({
-    mutationFn: signup,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["authUser"] });
-    },
-  });
+  const { isPending, error, signUpMutation } = useSignup();
 
   const handleChange = (e) => {
     setSignUpData({ ...signUpData, [e.target.name]: e.target.value });
@@ -30,15 +18,11 @@ const SignUpPage = () => {
 
   const handleSignup = (e) => {
     e.preventDefault();
-    console.log(signUpData);
-    mutate(signUpData);
+    signUpMutation(signUpData);
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8 bg-gradient-to-br from-primary/20 via-base-200 to-secondary/20 backdrop-blur-md"
-      data-theme="forest"
-    >
+    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8   ">
       <div className="flex flex-col lg:flex-row w-full max-w-6xl mx-auto bg-base-100/80 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden border border-primary/30">
         {/* LEFT SIDE - SIGNUP FORM */}
         <div className="w-full lg:w-1/2 p-6 sm:p-10 flex flex-col justify-center">
@@ -124,7 +108,8 @@ const SignUpPage = () => {
                   I agree to the{" "}
                   <span className="text-primary hover:underline">
                     terms of service
-                  </span>{" "}
+                  </span>
+                  {""}
                   and{" "}
                   <span className="text-primary hover:underline">
                     privacy policy
@@ -146,7 +131,7 @@ const SignUpPage = () => {
 
             <div className="text-center mt-4">
               <p className="text-sm">
-                Already have an account?{" "}
+                Already have an account ?{" "}
                 <Link to="/login" className="text-primary hover:underline">
                   Sign in
                 </Link>
@@ -156,13 +141,13 @@ const SignUpPage = () => {
         </div>
 
         {/* RIGHT SIDE - ILLUSTRATION */}
-        <div className="hidden lg:flex w-full lg:w-1/2 bg-gradient-to-br from-primary to-secondary items-center justify-center text-white relative overflow-hidden">
-          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm"></div>
-          <div className="relative z-10 max-w-md p-10 text-center">
+        <div className="hidden  lg:flex w-full  lg:w-1/2 bg-primary/10  items-center justify-center relative overflow-hidden">
+          <div className="absolute inset-0  backdrop-blur-sm"></div>
+          <div className="relative aspect-square max-w-sm mx-auto">
             <img
               src="/signup.png"
               alt="Connect illustration"
-              className="w-60 h-60 mx-auto mb-6 drop-shadow-2xl"
+              className="w-full h-full"
             />
             <h2 className="text-2xl font-bold mb-2">Welcome to Callyx</h2>
             <p className="opacity-90 text-sm leading-relaxed">

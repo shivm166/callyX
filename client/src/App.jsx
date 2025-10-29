@@ -9,7 +9,18 @@ import PageLoader from "./components/PageLoader.jsx";
 import NotificationsPage from "./pages/NotificationsPage.jsx";
 import OnboardingPage from "./pages/OnboardingPage.jsx";
 import useAuthUSer from "./hooks/useAuthUSer.js";
-import { Layout } from "lucide-react";
+import Layout from "./components/Layout.jsx";
+
+// corporate
+// valentine
+// halloween
+// forest
+// aqua
+// lofi
+// fantasy
+// black
+// luxury
+// café
 
 const App = () => {
   const { isLoading, authUser } = useAuthUSer();
@@ -19,7 +30,7 @@ const App = () => {
 
   if (isLoading) return <PageLoader />;
   return (
-    <div className="h-screen " data-theme="night">
+    <div className="h-screen " data-theme="corporate">
       <Routes>
         <Route
           path="/"
