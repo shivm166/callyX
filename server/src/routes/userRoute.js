@@ -14,7 +14,7 @@ const route = express.Router();
 route.use(protectRoute); //apply protectedRoute to all controller
 
 route.get("/getrecommendeduser", getRecommendedUser);
-route.get("/myfreind", myFriend);
+route.get("/myfriend", myFriend);
 
 route.post("/friend-request/:id", sendFriendRequest);
 route.put("/friend-request/:id/accept", acceptFriendRequest);

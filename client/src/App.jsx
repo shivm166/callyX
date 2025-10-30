@@ -1,36 +1,31 @@
-import HomePage from "./pages/HomePage";
 import { Navigate, Route, Routes } from "react-router";
-import CallPage from "./pages/CallPage";
-import LoginPage from "./pages/LoginPage";
-import SignUpPage from "./pages/SignUpPage";
-import ChatPage from "./pages/ChatPage";
-import toast, { Toaster } from "react-hot-toast";
-import PageLoader from "./components/PageLoader.jsx";
-import NotificationsPage from "./pages/NotificationsPage.jsx";
-import OnboardingPage from "./pages/OnboardingPage.jsx";
-import useAuthUSer from "./hooks/useAuthUSer.js";
-import Layout from "./components/Layout.jsx";
 
-// corporate
-// valentine
-// halloween
-// forest
-// aqua
-// lofi
-// fantasy
-// black
-// luxury
-// café
+import HomePage from "./pages/HomePage.jsx";
+import SignUpPage from "./pages/SignUpPage.jsx";
+import LoginPage from "./pages/LoginPage.jsx";
+import NotificationsPage from "./pages/NotificationsPage.jsx";
+import CallPage from "./pages/CallPage.jsx";
+import ChatPage from "./pages/ChatPage.jsx";
+import OnboardingPage from "./pages/OnboardingPage.jsx";
+
+import { Toaster } from "react-hot-toast";
+
+import PageLoader from "./components/PageLoader.jsx";
+import Layout from "./components/Layout.jsx";
+import { useThemeStore } from "./store/useThemeStore.js";
+import useAuthUser from "./hooks/useAuthUSer.js";
 
 const App = () => {
-  const { isLoading, authUser } = useAuthUSer();
+  const { isLoading, authUser } = useAuthUser();
+  const { theme } = useThemeStore();
 
   const isAuthenticated = Boolean(authUser);
   const isOnboarded = authUser?.isOnboarded;
 
   if (isLoading) return <PageLoader />;
+
   return (
-    <div className="h-screen " data-theme="corporate">
+    <div className="min-h-screen" data-theme={theme}>
       <Routes>
         <Route
           path="/"
@@ -115,9 +110,9 @@ const App = () => {
           }
         />
       </Routes>
+
       <Toaster />
     </div>
   );
 };
-
 export default App;

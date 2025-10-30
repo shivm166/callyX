@@ -1,4 +1,4 @@
-import { PaletteIcon } from "lucide-react";
+import { Paintbrush, PaletteIcon } from "lucide-react";
 import { useThemeStore } from "../store/useThemeStore";
 import { THEMES } from "../constants";
 
@@ -9,7 +9,7 @@ const ThemeSelector = () => {
     <div className="dropdown dropdown-end">
       {/* DROPDOWN TRIGGER */}
       <button tabIndex={0} className="btn btn-ghost btn-circle">
-        <PaletteIcon className="size-5" />
+        <Paintbrush className="size-5" />
       </button>
 
       <div
@@ -31,7 +31,7 @@ const ThemeSelector = () => {
             `}
               onClick={() => setTheme(themeOption.name)}
             >
-              <PaletteIcon className="size-4" />
+              <Paintbrush className="size-4" />
               <span className="text-sm font-medium">{themeOption.label}</span>
               {/* THEME PREVIEW COLORS */}
               <div className="ml-auto flex gap-1">

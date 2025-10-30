@@ -24,7 +24,7 @@ app.use(
 app.use(cookieParser());
 
 app.use("/api/v1/auth", route);
-app.use("/api/v1/user", userRoute);
+app.use("/api/v1/users", userRoute);
 app.use("/api/v1/chat", chatRoute);
 
 app.listen(port, () => {
