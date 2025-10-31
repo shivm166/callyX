@@ -16,7 +16,7 @@ import {
 
 import { capitialize } from "../lib/utils";
 
-import FriendCard, { getLanguageFlag } from "../components/friendCard";
+import FriendCard, { getLanguageFlag } from "../components/FriendCard";
 import NoFriendsFound from "../components/NoFriendsFound";
 
 const HomePage = () => {

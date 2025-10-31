@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router";
-import useAuthUser from "../hooks/useAuthUSer";
+import useAuthUser from "../hooks/useAuthUser";
 import { BellIcon, Headset, LogOutIcon, ShipWheelIcon } from "lucide-react";
 import ThemeSelector from "./ThemeSelector";
 import useLogout from "../hooks/useLogout";
