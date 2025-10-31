@@ -58,7 +58,7 @@ const SignUpPage = () => {
               </label>
               <input
                 type="text"
-                placeholder="John Doe"
+                placeholder="ex shivam gauswami"
                 name="fullName"
                 className="input input-bordered w-full rounded-lg"
                 value={signUpData.fullName}
