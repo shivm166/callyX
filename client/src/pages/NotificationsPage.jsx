@@ -1,10 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { acceptFriendRequest, getFriendRequests } from "../lib/api";
+import { Link } from "react-router";
 import {
   BellIcon,
   ClockIcon,
   MessageSquareIcon,
   UserCheckIcon,
+  ArrowLeftIcon,
 } from "lucide-react";
 import NoNotificationsFound from "../components/NoNotificationsFound";
 
@@ -30,7 +32,20 @@ const NotificationsPage = () => {
   return (
     <div className="p-4 sm:p-6 lg:p-8">
       <div className="container mx-auto max-w-4xl space-y-8">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-6">
+        {/* Header with Back Button for Mobile */}
+        <div className="flex items-center gap-2 mb-6 sm:hidden">
+          <button
+            onClick={() => window.history.back()}
+            className="btn btn-ghost btn-sm flex items-center gap-1"
+          >
+            <ArrowLeftIcon className="h-4 w-4" />
+            Back
+          </button>
+          <h1 className="text-xl font-bold">Notifications</h1>
+        </div>
+
+        {/* Desktop Header */}
+        <h1 className="hidden sm:block text-2xl sm:text-3xl font-bold tracking-tight mb-6">
           Notifications
         </h1>
 
@@ -40,6 +55,7 @@ const NotificationsPage = () => {
           </div>
         ) : (
           <>
+            {/* Incoming Friend Requests */}
             {incomingRequests.length > 0 && (
               <section className="space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
@@ -95,7 +111,7 @@ const NotificationsPage = () => {
               </section>
             )}
 
-            {/* ACCEPTED REQS NOTIFICATONS */}
+            {/* Accepted Requests Notifications */}
             {acceptedRequests.length > 0 && (
               <section className="space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
@@ -130,8 +146,8 @@ const NotificationsPage = () => {
                               Recently
                             </p>
                           </div>
-                          <div className="badge badge-success">
-                            <MessageSquareIcon className="h-3 w-3 mr-1" />
+                          <div className="badge badge-success flex items-center gap-1">
+                            <MessageSquareIcon className="h-3 w-3" />
                             New Friend
                           </div>
                         </div>
@@ -142,6 +158,7 @@ const NotificationsPage = () => {
               </section>
             )}
 
+            {/* No Notifications */}
             {incomingRequests.length === 0 && acceptedRequests.length === 0 && (
               <NoNotificationsFound />
             )}
@@ -151,4 +168,5 @@ const NotificationsPage = () => {
     </div>
   );
 };
+
 export default NotificationsPage;
