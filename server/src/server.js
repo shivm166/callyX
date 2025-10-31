@@ -26,14 +26,17 @@ app.use(
 );
 app.use(cookieParser());
 
-app.use("/api/v1/auth", route);
-app.use("/api/v1/users", userRoute);
-app.use("/api/v1/chat", chatRoute);
+app.use("/api/auth", route);
+app.use("/api/users", userRoute);
+app.use("/api/chat", chatRoute);
 
-if (process.env.NODE_ENV == "production") {
+// Serve frontend in production
+if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../client/dist")));
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../client", "dist", "index.html"));
+
+  // This matches any route except those starting with /api
+  app.get(/^(?!\/api).*/, (req, res) => {
+    res.sendFile(path.join(__dirname, "../client/dist/index.html"));
   });
 }
 
