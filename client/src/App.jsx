@@ -13,7 +13,7 @@ import { Toaster } from "react-hot-toast";
 import PageLoader from "./components/PageLoader.jsx";
 import Layout from "./components/Layout.jsx";
 import { useThemeStore } from "./store/useThemeStore.js";
-import useAuthUser from "./hooks/useAuthUSer.js";
+import useAuthUser from "./hooks/useAuthUser.js";
 
 const App = () => {
   const { isLoading, authUser } = useAuthUser();
