@@ -181,6 +181,13 @@ const HomePage = () => {
             </div>
           )}
         </section>
+        <footer className="mt-12 text-center text-sm text-base-content/60">
+          <hr className="my-4 border-base-300" />
+          <p>
+            Developed with ❤️ by{" "}
+            <span className="font-semibold text-primary">Shivam Gauswami</span>
+          </p>
+        </footer>
       </div>
     </div>
   );
