@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { getStreamToken } from "../lib/api";
 import { useState } from "react";
-import useAuthUser from "../hooks/useAuthUSer";
+import useAuthUser from "../hooks/useAuthUser";
 import ChatLoader from "../components/ChatLoader";
 import { useEffect } from "react";
 
