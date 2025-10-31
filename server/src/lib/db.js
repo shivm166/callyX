@@ -1,16 +1,18 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-dotenv.config(); // ✅ this ensures env vars are loaded here too
+import path from "path";
 
-const mongodb = process.env.MONGO_URL;
+// ✅ Tell dotenv exactly where your .env file is
+dotenv.config({ path: path.resolve("server/.env") });
+
 const connDB = async () => {
   try {
-    if (!mongodb) {
-      console.log("❌ MONGO_URL is undefined!", error);
+    if (!process.env.MONGO_URL) {
+      console.log("❌ MONGO_URL is undefined!");
       process.exit(1);
     }
 
-    const conn = await mongoose.connect(mongodb);
+    const conn = await mongoose.connect(process.env.MONGO_URL);
     console.log(`✅ MongoDB connected: ${conn.connection.host}`);
   } catch (error) {
     console.log("❌ Database error:", error);
