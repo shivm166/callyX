@@ -40,7 +40,18 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-app.listen(port, () => {
-  console.log(`server connected on ${port}`);
-  connDB();
-});
+// ADD THIS BLOCK INSTEAD
+try {
+  // 1. Wait for the database connection to complete successfully
+  await connDB();
+
+  // 2. Only after the DB is connected, start the Express server
+  app.listen(port, () => {
+    console.log(`server connected on ${port}`);
+  });
+} catch (error) {
+  // The connDB function already logs and exits on error,
+  // but this is good practice to catch any other potential startup errors.
+  console.error("❌ Failed to start server:", error);
+  process.exit(1);
+}
