@@ -1,6 +1,5 @@
 import { axiosInstance } from "./axios";
 
-// 🧠 Auth APIs
 export const signup = async (signUpData) => {
   const response = await axiosInstance.post("/auth/signup", signUpData);
   return response.data;
@@ -31,7 +30,6 @@ export const completeOnboarding = async (userData) => {
   return response.data;
 };
 
-// 🧩 Friend APIs
 export const getUserFriends = async () => {
   const response = await axiosInstance.get("/users/myfriend");
   return response.data || [];
