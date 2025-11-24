@@ -30,7 +30,7 @@ app.use("/api/auth", route);
 app.use("/api/users", userRoute);
 app.use("/api/chat", chatRoute);
 
-app.use("/", (res) => {
+app.use("/", (req, res) => {
   res.send("welcome to callX poverdby Shivam Guaswami");
 });
 try {
