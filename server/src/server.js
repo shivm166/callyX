@@ -30,28 +30,13 @@ app.use("/api/auth", route);
 app.use("/api/users", userRoute);
 app.use("/api/chat", chatRoute);
 
-// Serve frontend in production
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../client/dist")));
-
-  // This matches any route except those starting with /api
-  app.get(/^(?!\/api).*/, (req, res) => {
-    res.sendFile(path.join(__dirname, "../client/dist/index.html"));
-  });
-}
-
-// ADD THIS BLOCK INSTEAD
 try {
-  // 1. Wait for the database connection to complete successfully
   await connDB();
 
-  // 2. Only after the DB is connected, start the Express server
   app.listen(port, () => {
     console.log(`server connected on ${port}`);
   });
 } catch (error) {
-  // The connDB function already logs and exits on error,
-  // but this is good practice to catch any other potential startup errors.
   console.error("❌ Failed to start server:", error);
   process.exit(1);
 }
