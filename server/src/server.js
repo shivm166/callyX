@@ -20,7 +20,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://civilcare.vercel.app",
+      "https://shivamcallyx.vercel.app",
+    ],
     credentials: true,
   })
 );
