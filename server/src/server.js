@@ -22,8 +22,8 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://civilcare.vercel.app",
       "https://shivamcallyx.vercel.app",
+      "https://callyxshivam.onrender.com",
     ],
     credentials: true,
   })
