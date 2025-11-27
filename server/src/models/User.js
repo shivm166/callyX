@@ -51,5 +51,10 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// 🚀 SCALABILITY IMPROVEMENT: Add indexes for faster lookups
+userSchema.index({ email: 1 });
+userSchema.index({ isOnboarded: 1 });
+userSchema.index({ friends: 1 });
+
 const User = mongoose.model("User", userSchema, "users");
 export default User;

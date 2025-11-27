@@ -1,5 +1,9 @@
 import FriendRequest from "../models/friendRequest.js";
 import User from "../models/User.js";
+import {
+  sendRequestNotification,
+  sendAcceptanceNotification,
+} from "../lib/emailService.js";
 
 export const getRecommendedUser = async (req, res) => {
   try {
@@ -53,14 +57,13 @@ export async function sendFriendRequest(req, res) {
       return res.status(404).json({ message: "Recipient not found" });
     }
 
-    // FIX: Check if users are already friends (check both ways for robustness,
-    // explicitly converting ObjectId to string for safe comparison)
+    // FIX: Check if users are already friends
     const isRecipientFriendOfSender = recipient.friends.some(
       (friendId) => friendId.toString() === myId
     );
     const isSenderFriendOfRecipient = req.user.friends.some(
       (friendId) => friendId.toString() === recipientId
-    ); // Also check sender's list
+    );
 
     if (isRecipientFriendOfSender || isSenderFriendOfRecipient) {
       return res
@@ -88,6 +91,9 @@ export async function sendFriendRequest(req, res) {
       recipient: recipientId,
     });
 
+    // 🚀 ASYNCHRONOUS EMAIL NOTIFICATION
+    sendRequestNotification(myId, recipientId);
+
     res.status(201).json(friendRequest);
   } catch (error) {
     console.error("Error in sendFriendRequest controller", error.message);
@@ -97,40 +103,87 @@ export async function sendFriendRequest(req, res) {
 
 export const acceptFriendRequest = async (req, res) => {
   try {
-    // FIX: Correctly extract requestId from req.params
     const requestId = req.params.id;
+    const acceptorId = req.user.id;
     const friendRequest = await FriendRequest.findById(requestId);
 
     if (!friendRequest) {
       return res.status(404).json({ message: "friend request not found" });
     }
 
-    if (friendRequest.recipient.toString() !== req.user.id) {
+    if (friendRequest.recipient.toString() !== acceptorId) {
       return res
         .status(403)
-        .json({ message: "you are not authorized to accept this request.." });
+        .json({ message: "you are not authorized to accept this request." });
     }
-    friendRequest.status = "accepted";
-    await friendRequest.save();
 
-    await User.findByIdAndUpdate(friendRequest.sender, {
-      $addToSet: { friends: friendRequest.recipient },
-    });
-    await User.findByIdAndUpdate(friendRequest.recipient, {
-      $addToSet: { friends: friendRequest.sender },
-    });
+    // Proper message for when it's already accepted
+    if (friendRequest.status === "accepted") {
+      return res
+        .status(200)
+        .json({ message: "friend request already accepted." });
+    }
 
-    res.status(200).json({ message: "friend request accepted" });
+    const senderId = friendRequest.sender;
+
+    // Performance improvement using Promise.all for parallel updates
+    await Promise.all([
+      FriendRequest.updateOne(
+        { _id: requestId },
+        { $set: { status: "accepted" } }
+      ),
+      User.findByIdAndUpdate(senderId, {
+        $addToSet: { friends: acceptorId },
+      }),
+      User.findByIdAndUpdate(acceptorId, {
+        $addToSet: { friends: senderId },
+      }),
+    ]);
+
+    // 🚀 ASYNCHRONOUS EMAIL NOTIFICATION
+    sendAcceptanceNotification(acceptorId, senderId);
+
+    // Proper success message
+    res.status(200).json({ message: "friend request accepted successfully." });
   } catch (error) {
     res.status(500).json({ message: "internal server error" });
     console.log("error in acceptfriendReqvest", error);
   }
 };
 
+// 👇 NEW CONTROLLER FUNCTION FOR REJECTION 👇
+export const rejectFriendRequest = async (req, res) => {
+  try {
+    const requestId = req.params.id;
+    const currentUserId = req.user.id;
+
+    const friendRequest = await FriendRequest.findById(requestId);
+
+    if (!friendRequest) {
+      // Proper message if request doesn't exist (e.g., already rejected or accepted)
+      return res.status(404).json({ message: "friend request not found." });
+    }
+
+    if (friendRequest.recipient.toString() !== currentUserId) {
+      return res
+        .status(403)
+        .json({ message: "you are not authorized to reject this request." });
+    }
+
+    // For rejection, the simplest and cleanest way is to delete the request document.
+    await FriendRequest.deleteOne({ _id: requestId });
+
+    // Proper success message
+    res.status(200).json({ message: "friend request rejected successfully." });
+  } catch (error) {
+    res.status(500).json({ message: "internal server error" });
+    console.log("error in rejectFriendRequest", error);
+  }
+};
+
 export const getFriendRequest = async (req, res) => {
   try {
     const incomingReqs = await FriendRequest.find({
-      // FIX: Use req.user.id to get the authenticated user's ID
       recipient: req.user.id,
       status: "pending",
     }).populate(
@@ -139,7 +192,6 @@ export const getFriendRequest = async (req, res) => {
     );
 
     const acceptedReqs = await FriendRequest.find({
-      // FIX: Use req.user.id to get the authenticated user's ID
       sender: req.user.id,
       status: "accepted",
     }).populate("recipient", "fullName profilePic");
@@ -154,7 +206,6 @@ export const getFriendRequest = async (req, res) => {
 export const getOutgoingFriendRequest = async (req, res) => {
   try {
     const outgoingReqs = await FriendRequest.find({
-      // FIX: Use req.user.id to get the authenticated user's ID
       sender: req.user.id,
       status: "pending",
     }).populate(

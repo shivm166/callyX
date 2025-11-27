@@ -1,25 +1,27 @@
 import express from "express";
 import {
-  acceptFriendRequest,
-  getFriendRequest,
-  getOutgoingFriendRequest,
   getRecommendedUser,
   myFriend,
   sendFriendRequest,
+  acceptFriendRequest,
+  rejectFriendRequest, // Import the new controller
+  getFriendRequest,
+  getOutgoingFriendRequest,
 } from "../controllers/userController.js";
 import protectRoute from "../middalware/authMiddalware.js";
 
-const route = express.Router();
+const router = express.Router();
 
-route.use(protectRoute); //apply protectedRoute to all controller
+router.use(protectRoute);
 
-route.get("/getrecommendeduser", getRecommendedUser);
-route.get("/myfriend", myFriend);
+router.get("/recommended", getRecommendedUser);
+router.get("/myFriend", myFriend);
+router.post("/sendFriendRequest/:id", sendFriendRequest);
+router.get("/getFriendRequest", getFriendRequest);
+router.get("/outgoingFriendRequest", getOutgoingFriendRequest);
+router.put("/acceptFriendRequest/:id", acceptFriendRequest);
 
-route.post("/friend-request/:id", sendFriendRequest);
-route.put("/friend-request/:id/accept", acceptFriendRequest);
+// 👇 NEW ROUTE ADDED FOR REJECTION 👇
+router.delete("/rejectFriendRequest/:id", rejectFriendRequest);
 
-route.get("/friend-requests", getFriendRequest);
-route.get("/outgoing-friend-requests", getOutgoingFriendRequest);
-
-export default route;
+export default router;

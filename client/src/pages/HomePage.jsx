@@ -6,7 +6,7 @@ import {
   getUserFriends,
   sendFriendRequest,
 } from "../lib/api";
-import { Link } from "react-router";
+import { Link } from "react-router-dom"; // Note: Changed 'react-router' to 'react-router-dom' based on common usage in these files
 import {
   CheckCircleIcon,
   MapPinIcon,
@@ -33,7 +33,8 @@ const HomePage = () => {
     queryFn: getRecommendedUsers,
   });
 
-  const { data: outgoingFriendReqs } = useQuery({
+  // 👇 CORRECT THIS LINE 👇
+  const { data: outgoingFriendReqs = [] } = useQuery({
     queryKey: ["outgoingFriendReqs"],
     queryFn: getOutgoingFriendReqs,
   });
@@ -46,12 +47,17 @@ const HomePage = () => {
 
   useEffect(() => {
     const outgoingIds = new Set();
-    if (outgoingFriendReqs && outgoingFriendReqs.length > 0) {
-      outgoingFriendReqs.forEach((req) => {
+
+    // This is safe now because outgoingFriendReqs is guaranteed to be an array or undefined.
+    // However, if you apply the fix above, you can skip the outer "if" check
+    // and just use the .forEach, as a loading empty array is fine.
+    outgoingFriendReqs.forEach((req) => {
+      if (req.recipient) {
         outgoingIds.add(req.recipient._id);
-      });
-      setOutgoingRequestsIds(outgoingIds);
-    }
+      }
+    });
+
+    setOutgoingRequestsIds(outgoingIds);
   }, [outgoingFriendReqs]);
 
   return (
