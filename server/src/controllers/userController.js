@@ -151,7 +151,6 @@ export const acceptFriendRequest = async (req, res) => {
   }
 };
 
-// 👇 NEW CONTROLLER FUNCTION FOR REJECTION 👇
 export const rejectFriendRequest = async (req, res) => {
   try {
     const requestId = req.params.id;

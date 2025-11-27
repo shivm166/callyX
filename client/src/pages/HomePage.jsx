@@ -33,7 +33,7 @@ const HomePage = () => {
     queryFn: getRecommendedUsers,
   });
 
-  // 👇 CORRECT THIS LINE 👇
+  // 👇 CRITICAL FIX: Add = [] to ensure it's always an array
   const { data: outgoingFriendReqs = [] } = useQuery({
     queryKey: ["outgoingFriendReqs"],
     queryFn: getOutgoingFriendReqs,
@@ -45,19 +45,27 @@ const HomePage = () => {
       queryClient.invalidateQueries({ queryKey: ["outgoingFriendReqs"] }),
   });
 
-  useEffect(() => {
-    const outgoingIds = new Set();
+useEffect(() => {
+    // 1. Create a Set from the newly fetched data (guaranteed to be an array or [])
+    const newOutgoingIds = new Set();
+    if (outgoingFriendReqs.length > 0) {
+      outgoingFriendReqs.forEach((req) => {
+        if (req.recipient) {
+          newOutgoingIds.add(req.recipient._id);
+        }
+      });
+    }
 
-    // This is safe now because outgoingFriendReqs is guaranteed to be an array or undefined.
-    // However, if you apply the fix above, you can skip the outer "if" check
-    // and just use the .forEach, as a loading empty array is fine.
-    outgoingFriendReqs.forEach((req) => {
-      if (req.recipient) {
-        outgoingIds.add(req.recipient._id);
-      }
-    });
-
-    setOutgoingRequestsIds(outgoingIds);
+    // 2. Check if the contents of the new Set are functionally different from the current state.
+    // If the size is different OR if the stringified, sorted contents are different, update state.
+    const currentArray = Array.from(outgoingRequestsIds).sort().join(',');
+    const newArray = Array.from(newOutgoingIds).sort().join(',');
+    
+    if (newArray !== currentArray) {
+        setOutgoingRequestsIds(newOutgoingIds);
+    }
+    
+    // NOTE: This dependency array is correct and required by React.
   }, [outgoingFriendReqs]);
 
   return (

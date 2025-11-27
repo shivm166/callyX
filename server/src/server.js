@@ -36,7 +36,7 @@ app.use("/api/chat", chatRoute);
 
 app.use("/", (req, res) => {
   res.send("welcome to callX poverdby Shivam Guaswami");
-});
+}); 
 try {
   await connDB();
 

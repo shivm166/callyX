@@ -1,156 +1,109 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { acceptFriendRequest, getFriendRequests } from "../lib/api";
-import { Link } from "react-router";
-import {
-  BellIcon,
-  ClockIcon,
-  MessageSquareIcon,
-  UserCheckIcon,
-  ArrowLeftIcon,
-} from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getFriendRequests } from "../lib/api";
+import { useFriendRequestActions } from "../hooks/useFriendRequestActions"; // Import the new hook
 import NoNotificationsFound from "../components/NoNotificationsFound";
+import { capitialize } from "../lib/utils"; // Correct import for capitalize
+import { getLanguageFlag } from "../components/FriendCard"; // Correct import for flags
+import { CheckCheckIcon, UserXIcon } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const NotificationsPage = () => {
-  const queryClient = useQueryClient();
+  // Use the new hook for actions
+  const {
+    acceptRequestMutation,
+    isAccepting,
+    rejectRequestMutation,
+    isRejecting,
+  } = useFriendRequestActions();
 
-  const { data: friendRequests, isLoading } = useQuery({
-    queryKey: ["friendRequests"],
+  const {
+    data: requests = { incomingReqs: [], acceptedReqs: [] }, // Provide a default structure
+    isLoading: loadingRequests,
+  } = useQuery({
+    queryKey: ["incomingFriendReqs"],
     queryFn: getFriendRequests,
-  });
-
-  const { mutate: acceptRequestMutation, isPending } = useMutation({
-    mutationFn: acceptFriendRequest,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["friendRequests"] });
-      queryClient.invalidateQueries({ queryKey: ["friends"] });
+    select: (data) => {
+      return {
+        incomingReqs: data.incomingReqs || [],
+        acceptedReqs: data.acceptedReqs || [],
+      };
     },
   });
 
-  const incomingRequests = friendRequests?.incomingReqs || [];
-  const acceptedRequests = friendRequests?.acceptedReqs || [];
+  const { incomingReqs, acceptedReqs } = requests;
+  const showNoNotifications =
+    !loadingRequests && incomingReqs.length === 0 && acceptedReqs.length === 0;
+  const isPending = isAccepting || isRejecting;
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      <div className="container mx-auto max-w-4xl space-y-8">
-        {/* Header with Back Button for Mobile */}
-        <div className="flex items-center gap-2 mb-6 sm:hidden">
-          <button
-            onClick={() => window.history.back()}
-            className="btn btn-ghost btn-sm flex items-center gap-1"
-          >
-            <ArrowLeftIcon className="h-4 w-4" />
-            Back
-          </button>
-          <h1 className="text-xl font-bold">Notifications</h1>
-        </div>
+      <div className="container mx-auto space-y-10">
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight border-b pb-4">
+          Friend Requests & Notifications
+        </h2>
 
-        {/* Desktop Header */}
-        <h1 className="hidden sm:block text-2xl sm:text-3xl font-bold tracking-tight mb-6">
-          Notifications
-        </h1>
-
-        {isLoading ? (
+        {loadingRequests ? (
           <div className="flex justify-center py-12">
-            <span className="loading loading-spinner loading-lg"></span>
+            <span className="loading loading-spinner loading-lg" />
           </div>
+        ) : showNoNotifications ? (
+          // Assuming you have a component named NoNotificationsFound
+          <NoNotificationsFound />
         ) : (
-          <>
-            {/* Incoming Friend Requests */}
-            {incomingRequests.length > 0 && (
-              <section className="space-y-4">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <UserCheckIcon className="h-5 w-5 text-primary" />
-                  Friend Requests
-                  <span className="badge badge-primary ml-2">
-                    {incomingRequests.length}
-                  </span>
-                </h2>
-
-                <div className="space-y-3">
-                  {incomingRequests.map((request) => (
+          <div className="space-y-6">
+            {/* Incoming Requests */}
+            {incomingReqs.length > 0 && (
+              <section>
+                <h3 className="text-xl font-semibold mb-4 text-primary">
+                  Incoming Requests ({incomingReqs.length})
+                </h3>
+                <div className="space-y-4">
+                  {incomingReqs.map((req) => (
                     <div
-                      key={request._id}
-                      className="card bg-base-200 shadow-sm hover:shadow-md transition-shadow"
+                      key={req._id}
+                      className="card bg-base-200 p-4 flex flex-col md:flex-row items-center justify-between"
                     >
-                      <div className="card-body p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="avatar w-14 h-14 rounded-full bg-base-300">
-                              <img
-                                src={request.sender.profilePic}
-                                alt={request.sender.fullName}
-                              />
-                            </div>
-                            <div>
-                              <h3 className="font-semibold">
-                                {request.sender.fullName}
-                              </h3>
-                              <div className="flex flex-wrap gap-1.5 mt-1">
-                                <span className="badge badge-secondary badge-sm">
-                                  Native: {request.sender.nativeLanguage}
-                                </span>
-                                <span className="badge badge-outline badge-sm">
-                                  Learning: {request.sender.learningLanguage}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-
-                          <button
-                            className="btn btn-primary btn-sm"
-                            onClick={() => acceptRequestMutation(request._id)}
-                            disabled={isPending}
-                          >
-                            Accept
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Accepted Requests Notifications */}
-            {acceptedRequests.length > 0 && (
-              <section className="space-y-4">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <BellIcon className="h-5 w-5 text-success" />
-                  New Connections
-                </h2>
-
-                <div className="space-y-3">
-                  {acceptedRequests.map((notification) => (
-                    <div
-                      key={notification._id}
-                      className="card bg-base-200 shadow-sm"
-                    >
-                      <div className="card-body p-4">
-                        <div className="flex items-start gap-3">
-                          <div className="avatar mt-1 size-10 rounded-full">
+                      <div className="flex items-center gap-4">
+                        <div className="avatar">
+                          <div className="w-12 rounded-full">
                             <img
-                              src={notification.recipient.profilePic}
-                              alt={notification.recipient.fullName}
+                              src={req.sender.profilePic}
+                              alt={req.sender.fullName}
                             />
                           </div>
-                          <div className="flex-1">
-                            <h3 className="font-semibold">
-                              {notification.recipient.fullName}
-                            </h3>
-                            <p className="text-sm my-1">
-                              {notification.recipient.fullName} accepted your
-                              friend request
-                            </p>
-                            <p className="text-xs flex items-center opacity-70">
-                              <ClockIcon className="h-3 w-3 mr-1" />
-                              Recently
-                            </p>
-                          </div>
-                          <div className="badge badge-success flex items-center gap-1">
-                            <MessageSquareIcon className="h-3 w-3" />
-                            New Friend
+                        </div>
+                        <div>
+                          <p className="font-semibold">{req.sender.fullName}</p>
+                          <div className="text-xs opacity-70">
+                            {getLanguageFlag(req.sender.nativeLanguage)}
+                            {capitialize(req.sender.nativeLanguage)} native,
+                            learning
+                            {getLanguageFlag(req.sender.learningLanguage)}
+                            {capitialize(req.sender.learningLanguage)}
                           </div>
                         </div>
+                      </div>
+
+                      <div className="flex gap-3 mt-3 md:mt-0">
+                        {/* ACCEPT BUTTON */}
+                        <button
+                          onClick={() => acceptRequestMutation(req._id)}
+                          disabled={isPending}
+                          className="btn btn-sm btn-primary"
+                        >
+                          <CheckCheckIcon className="size-4" />
+                          {isAccepting ? "Accepting..." : "Accept"}
+                        </button>
+
+                        {/* REJECT BUTTON */}
+                        <button
+                          onClick={() => rejectRequestMutation(req._id)}
+                          disabled={isPending}
+                          className="btn btn-sm btn-error btn-outline"
+                        >
+                          <UserXIcon className="size-4" />
+                          {isRejecting ? "Rejecting..." : "Reject"}
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -158,11 +111,49 @@ const NotificationsPage = () => {
               </section>
             )}
 
-            {/* No Notifications */}
-            {incomingRequests.length === 0 && acceptedRequests.length === 0 && (
-              <NoNotificationsFound />
+            {/* Accepted Requests */}
+            {acceptedReqs.length > 0 && (
+              <section>
+                <h3 className="text-xl font-semibold mb-4 text-success">
+                  Accepted Requests ({acceptedReqs.length})
+                </h3>
+                <div className="space-y-4">
+                  {acceptedReqs.map((req) => (
+                    <div
+                      key={req._id}
+                      className="card bg-base-100 border border-success p-4 flex items-center justify-between"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="avatar">
+                          <div className="w-12 rounded-full">
+                            <img
+                              src={req.recipient.profilePic}
+                              alt={req.recipient.fullName}
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <p className="font-semibold text-success">
+                            You are now friends with {req.recipient.fullName}.
+                          </p>
+                          <p className="text-xs opacity-70">
+                            Start a conversation!
+                          </p>
+                        </div>
+                      </div>
+                      {/* Assuming the accepted requests return the recipient details */}
+                      <Link
+                        to={`/chat/${req.recipient._id}`}
+                        className="btn btn-sm btn-success"
+                      >
+                        Go to Chat
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              </section>
             )}
-          </>
+          </div>
         )}
       </div>
     </div>
