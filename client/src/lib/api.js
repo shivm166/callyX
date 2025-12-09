@@ -1,9 +1,7 @@
 import { axiosInstance } from "./axios";
 
 export const rejectFriendRequest = async (requestId) => {
-  const { data } = await axiosInstance.delete(
-    `/users/rejectFriendRequest/${requestId}`
-  );
+  const { data } = await axiosInstance.delete(`/users/rejectFriendRequest/${requestId}`);
   return data;
 };
 
@@ -38,13 +36,12 @@ export const completeOnboarding = async (userData) => {
 };
 
 export const getUserFriends = async () => {
-  const response = await axiosInstance.get("/users/myfriend");
+  const response = await axiosInstance.get("/users/myFriend");
   return response.data || [];
 };
 
 export const getRecommendedUsers = async () => {
   const response = await axiosInstance.get("/users/recommended");
-  console.log("recommended users response:", response.data);
   return response.data?.users || [];
 };
 
@@ -54,10 +51,7 @@ export const getOutgoingFriendReqs = async () => {
 };
 
 export const sendFriendRequest = async (userId) => {
-  const response = await axiosInstance.post(
-    `/users/sendFriendRequest/${userId}`
-  );
-  console.log(res.data);
+  const response = await axiosInstance.post(`/users/sendFriendRequest/${userId}`);
   return response.data;
 };
 
@@ -67,9 +61,7 @@ export async function getFriendRequests() {
 }
 
 export async function acceptFriendRequest(requestId) {
-  const response = await axiosInstance.put(
-    `/users/acceptFriendRequest/${requestId}/accept`
-  );
+  const response = await axiosInstance.put(`/users/acceptFriendRequest/${requestId}/accept`);
   return response.data;
 }
 

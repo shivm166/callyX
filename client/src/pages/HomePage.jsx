@@ -33,7 +33,6 @@ const HomePage = () => {
     queryFn: getRecommendedUsers,
   });
 
-  // 👇 CRITICAL FIX: Add = [] to ensure it's always an array
   const { data: outgoingFriendReqs = [] } = useQuery({
     queryKey: ["outgoingFriendReqs"],
     queryFn: getOutgoingFriendReqs,

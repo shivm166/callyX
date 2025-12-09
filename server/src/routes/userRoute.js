@@ -4,9 +4,9 @@ import {
   myFriend,
   sendFriendRequest,
   acceptFriendRequest,
-  rejectFriendRequest, // Import the new controller
+  rejectFriendRequest,
   getFriendRequest,
-  getOutgoingFriendRequest,
+  getOutgoingFriendRequest
 } from "../controllers/userController.js";
 import protectRoute from "../middalware/authMiddalware.js";
 
@@ -20,8 +20,7 @@ router.post("/sendFriendRequest/:id", sendFriendRequest);
 router.get("/getFriendRequest", getFriendRequest);
 router.get("/outgoingFriendRequest", getOutgoingFriendRequest);
 router.put("/acceptFriendRequest/:id", acceptFriendRequest);
-
-// 👇 NEW ROUTE ADDED FOR REJECTION 👇
-router.delete("/rejectFriendRequest/:id", rejectFriendRequest);
+router.put("/acceptFriendRequest/:id/accept", acceptFriendRequest);
+router.delete("/rejectFriendRequest/:requestId", rejectFriendRequest);
 
 export default router;
