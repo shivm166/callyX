@@ -7,7 +7,7 @@ import NotificationsPage from "./pages/NotificationsPage.jsx";
 import CallPage from "./pages/CallPage.jsx";
 import ChatPage from "./pages/ChatPage.jsx";
 import OnboardingPage from "./pages/OnboardingPage.jsx";
-import LandingPage from "./pages/LandingPage.jsx"; // <-- note capitalization
+import LandingPage from "./pages/LandingPage.jsx"; 
 import { Toaster } from "react-hot-toast";
 import PageLoader from "./components/PageLoader.jsx";
 import Layout from "./components/Layout.jsx";
@@ -15,13 +15,11 @@ import { useThemeStore } from "./store/useThemeStore.js";
 import useAuthUser from "./hooks/useAuthUser.js";
 
 const RequireAuth = ({ children, isAuthenticated }) => {
-  // if not authenticated -> send to login
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   return children;
 };
 
 const RequireOnboarded = ({ children, authUser }) => {
-  // if authenticated but not onboarded -> send to onboarding
   if (authUser && !authUser.isOnboarded) return <Navigate to="/onboarding" replace />;
   return children;
 };
@@ -38,20 +36,17 @@ const App = () => {
   return (
     <div className="min-h-screen" data-theme={theme}>
       <Routes>
-        {/* Public landing (for unauthenticated users) */}
         <Route
           path="/"
           element={
             !isAuthenticated ? (
                 <LandingPage />
             ) : (
-              // If logged in, route to onboarding or home depending on onboard status
               <Navigate to={isOnboarded ? "/home" : "/onboarding"} replace />
             )
           }
         />
 
-        {/* Login / Signup (public) */}
         <Route
           path="/login"
           element={!isAuthenticated ? <LoginPage /> : <Navigate to={isOnboarded ? "/home" : "/onboarding"} replace />}
@@ -61,7 +56,6 @@ const App = () => {
           element={!isAuthenticated ? <SignUpPage /> : <Navigate to={isOnboarded ? "/home" : "/onboarding"} replace />}
         />
 
-        {/* Onboarding (authenticated users only) */}
         <Route
           path="/onboarding"
           element={
@@ -71,7 +65,6 @@ const App = () => {
           }
         />
 
-        {/* Protected app pages (require auth and onboarding) */}
         <Route
           path="/home"
           element={
@@ -122,7 +115,6 @@ const App = () => {
           }
         />
 
-        {/* fallback - unknown routes */}
         <Route path="*" element={<Navigate to={isAuthenticated ? (isOnboarded ? "/home" : "/onboarding") : "/"} replace />} />
       </Routes>
 

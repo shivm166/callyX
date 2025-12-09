@@ -6,7 +6,7 @@ import {
   getUserFriends,
   sendFriendRequest,
 } from "../lib/api";
-import { Link } from "react-router-dom"; // Note: Changed 'react-router' to 'react-router-dom' based on common usage in these files
+import { Link } from "react-router-dom"; 
 import {
   CheckCircleIcon,
   MapPinIcon,
@@ -45,7 +45,6 @@ const HomePage = () => {
   });
 
 useEffect(() => {
-    // 1. Create a Set from the newly fetched data (guaranteed to be an array or [])
     const newOutgoingIds = new Set();
     if (outgoingFriendReqs.length > 0) {
       outgoingFriendReqs.forEach((req) => {
@@ -54,9 +53,6 @@ useEffect(() => {
         }
       });
     }
-
-    // 2. Check if the contents of the new Set are functionally different from the current state.
-    // If the size is different OR if the stringified, sorted contents are different, update state.
     const currentArray = Array.from(outgoingRequestsIds).sort().join(',');
     const newArray = Array.from(newOutgoingIds).sort().join(',');
     
@@ -64,7 +60,6 @@ useEffect(() => {
         setOutgoingRequestsIds(newOutgoingIds);
     }
     
-    // NOTE: This dependency array is correct and required by React.
   }, [outgoingFriendReqs]);
 
   return (
@@ -151,7 +146,6 @@ useEffect(() => {
                         </div>
                       </div>
 
-                      {/* Languages with flags */}
                       <div className="flex flex-wrap gap-1.5">
                         <span className="badge badge-secondary">
                           {getLanguageFlag(user.nativeLanguage)}
@@ -167,7 +161,6 @@ useEffect(() => {
                         <p className="text-sm opacity-70">{user.bio}</p>
                       )}
 
-                      {/* Action button */}
                       <button
                         className={`btn w-full mt-2 ${
                           hasRequestBeenSent ? "btn-disabled" : "btn-primary"
@@ -197,7 +190,7 @@ useEffect(() => {
         <footer className="mt-12 text-center text-sm text-base-content/60">
           <hr className="my-4 border-base-300" />
           <p>
-            Developed with ❤️ by{" "}
+            Developed by{" "}
             <span className="font-semibold text-primary">Shivam Gauswami</span>
           </p>
         </footer>

@@ -1,14 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { getFriendRequests } from "../lib/api";
-import { useFriendRequestActions } from "../hooks/useFriendRequestActions"; // Import the new hook
+import { useFriendRequestActions } from "../hooks/useFriendRequestActions"; 
 import NoNotificationsFound from "../components/NoNotificationsFound";
-import { capitialize } from "../lib/utils"; // Correct import for capitalize
-import { getLanguageFlag } from "../components/FriendCard"; // Correct import for flags
+import { capitialize } from "../lib/utils"; 
+import { getLanguageFlag } from "../components/FriendCard"; 
 import { CheckCheckIcon, UserXIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const NotificationsPage = () => {
-  // Use the new hook for actions
   const {
     acceptRequestMutation,
     isAccepting,
@@ -17,7 +16,7 @@ const NotificationsPage = () => {
   } = useFriendRequestActions();
 
   const {
-    data: requests = { incomingReqs: [], acceptedReqs: [] }, // Provide a default structure
+    data: requests = { incomingReqs: [], acceptedReqs: [] },
     isLoading: loadingRequests,
   } = useQuery({
     queryKey: ["incomingFriendReqs"],
@@ -47,11 +46,9 @@ const NotificationsPage = () => {
             <span className="loading loading-spinner loading-lg" />
           </div>
         ) : showNoNotifications ? (
-          // Assuming you have a component named NoNotificationsFound
           <NoNotificationsFound />
         ) : (
           <div className="space-y-6">
-            {/* Incoming Requests */}
             {incomingReqs.length > 0 && (
               <section>
                 <h3 className="text-xl font-semibold mb-4 text-primary">
@@ -85,7 +82,6 @@ const NotificationsPage = () => {
                       </div>
 
                       <div className="flex gap-3 mt-3 md:mt-0">
-                        {/* ACCEPT BUTTON */}
                         <button
                           onClick={() => acceptRequestMutation(req._id)}
                           disabled={isPending}
@@ -95,7 +91,6 @@ const NotificationsPage = () => {
                           {isAccepting ? "Accepting..." : "Accept"}
                         </button>
 
-                        {/* REJECT BUTTON */}
                         <button
                           onClick={() => rejectRequestMutation(req._id)}
                           disabled={isPending}
@@ -111,7 +106,6 @@ const NotificationsPage = () => {
               </section>
             )}
 
-            {/* Accepted Requests */}
             {acceptedReqs.length > 0 && (
               <section>
                 <h3 className="text-xl font-semibold mb-4 text-success">
@@ -141,7 +135,6 @@ const NotificationsPage = () => {
                           </p>
                         </div>
                       </div>
-                      {/* Assuming the accepted requests return the recipient details */}
                       <Link
                         to={`/chat/${req.recipient._id}`}
                         className="btn btn-sm btn-success"
