@@ -21,9 +21,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",
       "https://shivamcallyx.vercel.app",
-      "https://callyxshivam.onrender.com",
+      "https://callyx.vercel.app",
+      "http://localhost:5173",
     ],
     credentials: true,
   })
