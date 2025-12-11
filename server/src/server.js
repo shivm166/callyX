@@ -34,13 +34,11 @@ const corsOptions = {
   optionsSuccessStatus: 204,
 };
 
-// apply CORS globally
 app.use(cors(corsOptions));
 
-// Explicitly respond to OPTIONS for all routes (preflight)
-app.options("*", cors(corsOptions));
+app.options('/*', cors(corsOptions));
 
-// Add a small middleware to always include CORS headers even on errors/redirects
+
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   if (corsOptions.origin.includes(origin)) {
