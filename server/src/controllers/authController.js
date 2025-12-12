@@ -113,10 +113,17 @@ export const signin = async (req, res) => {
 
 export const logout = async (req, res) => {
   try {
-    res.clearCookie("jwt");
-    res.status(200).json({ success: true, message: "logout successffully" });
-  } catch (error) {}
-};
+    res.clearCookie("jwt", {
+      httpOnly: true,
+      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+    });
+    res.status(200).json({ success: true, message: "logout successfully" });
+  } catch (error) {
+    console.error("Logout error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
 
 export const onBoard = async (req, res) => {
   try {

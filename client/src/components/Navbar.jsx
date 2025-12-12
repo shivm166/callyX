@@ -1,6 +1,6 @@
-import { Link, useLocation } from "react-router";
+import { Link, useLocation } from "react-router"; // or "react-router-dom"
 import useAuthUser from "../hooks/useAuthUser";
-import { BellIcon, Headset, LogOutIcon, ShipWheelIcon } from "lucide-react";
+import { BellIcon, Headset, LogOutIcon } from "lucide-react";
 import ThemeSelector from "./ThemeSelector";
 import useLogout from "../hooks/useLogout";
 
@@ -8,7 +8,6 @@ const Navbar = () => {
   const { authUser } = useAuthUser();
   const location = useLocation();
   const isChatPage = location.pathname?.startsWith("/chat");
-
 
   const { logoutMutation } = useLogout();
 
@@ -20,7 +19,7 @@ const Navbar = () => {
             <div className="pl-5">
               <Link to="/" className="flex items-center gap-2.5">
                 <Headset className="size-9 text-primary" />
-                <span className="text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary  tracking-wider">
+                <span className="text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-wider">
                   callyX
                 </span>
               </Link>
@@ -37,15 +36,18 @@ const Navbar = () => {
 
           <ThemeSelector />
 
-          <div className="avatar">
-            <div className="w-9 rounded-full">
-              <img
-                src={authUser?.profilePic}
-                alt="User Avatar"
-                rel="noreferrer"
-              />
+          {/* Only show avatar if user exists */}
+          {authUser && (
+            <div className="avatar">
+              <div className="w-9 rounded-full">
+                <img
+                  src={authUser.profilePic}
+                  alt="User Avatar"
+                  referrerPolicy="no-referrer"
+                />
+              </div>
             </div>
-          </div>
+          )}
 
           <button
             className="btn btn-ghost btn-circle"
