@@ -24,7 +24,8 @@ const RequireAuth = ({ children, isAuthenticated }) => {
 const RequireOnboarded = ({ children, authUser }) => {
   // If authUser exists and is not onboarded, redirect to onboarding.
   // When used alongside RequireAuth, authUser will be defined.
-  if (authUser && !authUser.isOnboarded) return <Navigate to="/onboarding" replace />;
+  if (authUser && !authUser.isOnboarded)
+    return <Navigate to="/onboarding" replace />;
   return children;
 };
 
@@ -34,7 +35,10 @@ const App = () => {
 
   // memoize derived booleans (optional)
   const isAuthenticated = useMemo(() => Boolean(authUser), [authUser]);
-  const isOnboarded = useMemo(() => Boolean(authUser?.isOnboarded), [authUser?.isOnboarded]);
+  const isOnboarded = useMemo(
+    () => Boolean(authUser?.isOnboarded),
+    [authUser?.isOnboarded]
+  );
 
   if (isLoading) return <PageLoader />;
 
@@ -79,7 +83,11 @@ const App = () => {
           path="/onboarding"
           element={
             <RequireAuth isAuthenticated={isAuthenticated}>
-              {!isOnboarded ? <OnboardingPage /> : <Navigate to="/home" replace />}
+              {!isOnboarded ? (
+                <OnboardingPage />
+              ) : (
+                <Navigate to="/home" replace />
+              )}
             </RequireAuth>
           }
         />
@@ -140,7 +148,9 @@ const App = () => {
           path="*"
           element={
             <Navigate
-              to={isAuthenticated ? (isOnboarded ? "/home" : "/onboarding") : "/"}
+              to={
+                isAuthenticated ? (isOnboarded ? "/home" : "/onboarding") : "/"
+              }
               replace
             />
           }
