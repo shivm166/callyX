@@ -37,11 +37,12 @@ const OnboardingPage = () => {
   };
 
   const handleRandomAvatar = () => {
-    const idx = Math.floor(Math.random() * 100) + 1; 
-    const randomAvatar = `https://avatar.iran.liara.run/public/${idx}.png`;
+    // DiceBear works best with a larger seed range for better variety
+    const seed = Math.floor(Math.random() * 10000);
+    const randomAvatar = `https://api.dicebear.com/7.x/lorelei/svg?seed=${seed}`;
 
     setFormState({ ...formState, profilePic: randomAvatar });
-    toast.success("Random profile picture generated!");
+    toast.success("Random Lorelei avatar generated!");
   };
 
   return (
@@ -179,7 +180,6 @@ const OnboardingPage = () => {
                 <MapPin className="absolute  top-1/2 transform -translate-y-1/2 left-3 size-5 text-base-content opacity-70" />
               </div>
             </div>
-
 
             <button
               className="btn btn-primary w-full"

@@ -13,9 +13,9 @@ export const signup = async (req, res) => {
       return res.status(400).json({ message: "User already exists " });
     }
 
-    // create random avatar
-    const idx = Math.floor(Math.random() * 100) + 1;
-    const randomAvatar = `https://avatar.iran.liara.run/public/${idx}.png`;
+    // Create random Lorelei avatar using DiceBear
+    const idx = Math.floor(Math.random() * 1000) + 1; // Increased range for more variety
+    const randomAvatar = `https://api.dicebear.com/7.x/lorelei/svg?seed=${idx}`;
 
     // hash password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -123,7 +123,7 @@ export const logout = async (req, res) => {
     console.error("Logout error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
-}
+};
 
 export const onBoard = async (req, res) => {
   try {
@@ -157,7 +157,7 @@ export const onBoard = async (req, res) => {
         ...req.body,
         isOnboarded: true,
       },
-      { new: true }
+      { new: true },
     );
 
     if (!updatedUser)
@@ -170,12 +170,12 @@ export const onBoard = async (req, res) => {
         image: updatedUser.profilePic || "",
       });
       console.log(
-        `Stream user updated after onboarding for ${updatedUser.fullName}`
+        `Stream user updated after onboarding for ${updatedUser.fullName}`,
       );
     } catch (streamError) {
       console.log(
         "Error updating Stream user during onboarding:",
-        streamError.message
+        streamError.message,
       );
     }
 
